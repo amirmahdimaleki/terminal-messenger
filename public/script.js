@@ -7,7 +7,6 @@ class TerminalMessenger {
     this.copyBtn = document.getElementById("copyBtn");
     this.charCount = document.getElementById("charCount");
     this.themeGrid = document.getElementById("themeGrid");
-    this.creditsBtn = document.getElementById("creditsBtn");
 
     this.selectedTheme = "classic";
     this.themes = {};
@@ -19,7 +18,6 @@ class TerminalMessenger {
     this.sendBtn.addEventListener("click", () => this.sendMessage());
     this.copyBtn.addEventListener("click", () => this.copyCommand());
     this.messageInput.addEventListener("input", () => this.updateCharCount());
-    this.creditsBtn.addEventListener("click", () => this.openCredits());
 
     this.loadThemes();
     this.renderThemeOptions();
@@ -181,11 +179,6 @@ class TerminalMessenger {
         console.error("Failed to copy: ", err);
         alert("Failed to copy command to clipboard");
       });
-  }
-
-  openCredits() {
-    // Open GitHub profile in new tab
-    window.open("https://github.com/amirmahdimaleki", "_blank");
   }
 
   setLoading(loading) {
