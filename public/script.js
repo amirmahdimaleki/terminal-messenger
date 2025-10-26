@@ -6,6 +6,10 @@ class TerminalMessenger {
     this.terminalCommand = document.getElementById("terminalCommand");
     this.copyBtn = document.getElementById("copyBtn");
     this.charCount = document.getElementById("charCount");
+    this.themeGrid = document.getElementById("themeGrid");
+
+    this.selectedTheme = "classic";
+    this.themes = {};
 
     this.init();
   }
@@ -15,6 +19,9 @@ class TerminalMessenger {
     this.copyBtn.addEventListener("click", () => this.copyCommand());
     this.messageInput.addEventListener("input", () => this.updateCharCount());
 
+    this.loadThemes();
+    this.renderThemeOptions();
+
     // Allow Enter key with Shift, but prevent form submission
     this.messageInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -22,6 +29,72 @@ class TerminalMessenger {
         this.sendMessage();
       }
     });
+  }
+
+  loadThemes() {
+    this.themes = {
+      classic: {
+        name: "Classic Terminal",
+        preview: `┌─ MESSAGE ─┐\n│  Hello!   │\n└───────────┘`,
+        color: "32", // Green
+      },
+      heart: {
+        name: "Heart Love",
+        preview: ` 💖 \nHello!\n 💖 `,
+        color: "31", // Red
+      },
+      code: {
+        name: "Code Master",
+        preview: `{ /* Hello! */ }`,
+        color: "36", // Cyan
+      },
+      hacker: {
+        name: "Hacker Style",
+        preview: `[>] Hello! [<]`,
+        color: "32", // Green
+      },
+      star: {
+        name: "Starry Night",
+        preview: `✦ Hello! ✦`,
+        color: "33", // Yellow
+      },
+      banner: {
+        name: "Big Banner",
+        preview: `▄▄▄▄ Hello! ▄▄▄▄`,
+        color: "35", // Magenta
+      },
+      dragon: {
+        name: "Dragon Fire",
+        preview: `🐉 Hello! 🐉`,
+        color: "31", // Red
+      },
+      robot: {
+        name: "Robot AI",
+        preview: `🤖 Hello! 🤖`,
+        color: "36", // Cyan
+      },
+    };
+  }
+
+  renderThemeOptions() {
+    this.themeGrid.innerHTML = "";
+
+    Object.entries(this.themes).forEach(([id, theme]) => {
+      const themeElement = document.createElement("div");
+      themeElement.className = `theme-option ${id === this.selectedTheme ? "selected" : ""}`;
+      themeElement.innerHTML = `
+                <div class="theme-preview">${theme.preview}</div>
+                <div class="theme-name">${theme.name}</div>
+            `;
+
+      themeElement.addEventListener("click", () => this.selectTheme(id));
+      this.themeGrid.appendChild(themeElement);
+    });
+  }
+
+  selectTheme(themeId) {
+    this.selectedTheme = themeId;
+    this.renderThemeOptions();
   }
 
   updateCharCount() {
@@ -58,7 +131,10 @@ class TerminalMessenger {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({
+          message,
+          theme: this.selectedTheme,
+        }),
       });
 
       const data = await response.json();
@@ -93,7 +169,7 @@ class TerminalMessenger {
       .writeText(command)
       .then(() => {
         const originalText = this.copyBtn.textContent;
-        this.copyBtn.textContent = "Copied!";
+        this.copyBtn.textContent = "✅ Copied!";
 
         setTimeout(() => {
           this.copyBtn.textContent = originalText;
@@ -107,7 +183,7 @@ class TerminalMessenger {
 
   setLoading(loading) {
     this.sendBtn.disabled = loading;
-    this.sendBtn.textContent = loading ? "Creating Link..." : "Generate Terminal Link";
+    this.sendBtn.textContent = loading ? "🎨 Creating Beautiful Link..." : "🚀 Generate Terminal Link";
   }
 }
 

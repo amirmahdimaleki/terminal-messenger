@@ -264,7 +264,7 @@
     <div class="container">
         <div class="header">
             <h1>Terminal Messenger</h1>
-            <p class="subtitle">Send messages via terminal</p>
+            <p class="subtitle">Send beautiful formatted messages via terminal</p>
         </div>
 
         <div class="message-form">
@@ -272,8 +272,16 @@
             <div class="char-count">
                 <span id="charCount">0</span>/500
             </div>
+
+            <div class="theme-selection">
+                <h3>Choose Your Theme:</h3>
+                <div class="theme-grid" id="themeGrid">
+                    <!-- Themes will be populated by JavaScript -->
+                </div>
+            </div>
+
             <button id="sendBtn" class="send-button">
-                Generate Terminal Link
+                🚀 Generate Terminal Link
             </button>
         </div>
 
@@ -281,9 +289,9 @@
             <p class="result-title">Your terminal command:</p>
             <div class="terminal-command">
                 <code id="terminalCommand"></code>
-                <button id="copyBtn" class="copy-button">Copy</button>
+                <button id="copyBtn" class="copy-button">📋 Copy</button>
             </div>
-            <p class="instruction">Run this command in your terminal to view the message</p>
+            <p class="instruction">Run this command in your terminal to view your beautiful message</p>
         </div>
 
         <div class="footer">
