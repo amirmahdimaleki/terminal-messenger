@@ -1,255 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Messenger</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
-        }
-
-        body {
-            background: #0a0a0a;
-            color: #f0f0f0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            width: 100%;
-            text-align: center;
-        }
-
-        header {
-            margin-bottom: 40px;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 400;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #00c9ff, #92fe9d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            color: #6b7280;
-            font-size: 1.1rem;
-            margin-top: 10px;
-        }
-
-        .input-container {
-            position: relative;
-            margin: 30px 0;
-        }
-
-        input {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #333;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1.1rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        input:focus {
-            border-color: #00c9ff;
-            box-shadow: 0 0 0 2px rgba(0, 201, 255, 0.2);
-        }
-
-        input::placeholder {
-            color: #555;
-        }
-
-        .btn {
-            background: linear-gradient(90deg, #00c9ff, #92fe9d);
-            color: #000;
-            border: none;
-            padding: 14px 32px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 201, 255, 0.3);
-        }
-
-        .result {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            display: none;
-        }
-
-        .result.show {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .url {
-            word-break: break-all;
-            margin: 10px 0;
-            color: #00c9ff;
-            font-weight: 600;
-        }
-
-        .instructions {
-            margin-top: 20px;
-            color: #aaa;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        code {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-        footer {
-            margin-top: 50px;
-            color: #555;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            input {
-                padding: 14px 16px;
-                font-size: 1rem;
-            }
-
-            .btn {
-                padding: 12px 24px;
-                font-size: 1rem;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <header>
-            <h1>Terminal Messenger</h1>
-            <p class="subtitle">Send messages to your terminal</p>
-        </header>
-
-        <div class="input-container">
-            <input type="text" id="messageInput" placeholder="Enter your message..." maxlength="500">
-            <button class="btn" id="sendBtn">Send Message</button>
-        </div>
-
-        <div class="result" id="result">
-            <p>Your message is ready! Use this command in your terminal:</p>
-            <div class="url" id="urlDisplay"></div>
-            <div class="instructions">
-                <p>Or simply visit the URL in your browser to see the message.</p>
-                <p>Messages expire after 24 hours.</p>
-            </div>
-        </div>
-
-        <footer>
-            <p>Terminal Messenger • Simple, elegant, terminal-friendly</p>
-        </footer>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const messageInput = document.getElementById('messageInput');
-            const sendBtn = document.getElementById('sendBtn');
-            const resultDiv = document.getElementById('result');
-            const urlDisplay = document.getElementById('urlDisplay');
-
-            // Handle form submission
-            sendBtn.addEventListener('click', sendMessage);
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-
-            async function sendMessage() {
-                const message = messageInput.value.trim();
-                if (!message) {
-                    messageInput.focus();
-                    return;
-                }
-
-                try {
-                    // Show loading state
-                    sendBtn.textContent = 'Sending...';
-                    sendBtn.disabled = true;
-
-                    const response = await fetch('/api/send', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ message })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        const url = `${window.location.origin}/${data.id}`;
-                        urlDisplay.textContent = `curl ${url}`;
-                        resultDiv.classList.add('show');
-                        messageInput.value = '';
-                    } else {
-                        alert('Error: ' + (data.error || 'Failed to send message'));
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Network error. Please try again.');
-                } finally {
-                    sendBtn.textContent = 'Send Message';
-                    sendBtn.disabled = false;
-                }
-            }
-        });
-    </script>
-</body>
-
-</html> -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -258,6 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal Messenger</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .credit-link {
+            display: block;
+            width: fit-content;
+            margin: 20px auto 10px;
+            padding: 8px 16px;
+            background-color: transparent;
+            color: #00cc66;
+            border: 1px solid #00cc66;
+            border-radius: 4px;
+            text-align: center;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .credit-link:hover {
+            background-color: rgba(0, 204, 102, 0.1);
+            color: #00ff99;
+            border-color: #00ff99;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -276,7 +48,7 @@
             <div class="theme-selection">
                 <h3>Choose Your Theme:</h3>
                 <div class="theme-grid" id="themeGrid">
-                    <!-- Themes will be populated by JavaScript -->
+
                 </div>
             </div>
 
@@ -293,6 +65,11 @@
             </div>
             <p class="instruction">Run this command in your terminal to view your beautiful message</p>
         </div>
+
+
+        <a href="https://github.com/amirmahdimaleki" target="_blank" class="credit-link">
+            Made by Amir with the help of DeepSeek
+        </a>
 
         <div class="footer">
             <p>Example: <code>curl https://your-domain.in/abc123</code></p>
